@@ -76,7 +76,7 @@ namespace devMobile.IoT.Netduino.FieldGateway
          double humidity = sensor.Humidity();
          double temperature = sensor.Temperature();
 
-         Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss} H: {humidity:0.0} T:{temperature:0.0}");
+         Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss} H:{humidity} T:{temperature}");
 
          rfm9XDevice.Send(fieldGatewayAddress, Encoding.UTF8.GetBytes("t " + temperature.ToString("F1") + ",H " + humidity.ToString("F0")));
 
@@ -96,7 +96,7 @@ namespace devMobile.IoT.Netduino.FieldGateway
             string messageText = new string(UTF8Encoding.UTF8.GetChars(e.Data));
             string addressText = new string(UTF8Encoding.UTF8.GetChars(e.Address));
 
-            Debug.WriteLine($"{DateTime.UtcNow:HH:MM:ss}-Rfm9X PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi} dBm RSSI {e.Rssi}dBm = {e.Data.Length} byte message {messageText}");
+            Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss}-Rfm9X PacketSnr {e.PacketSnr} Packet RSSI {e.PacketRssi} dBm RSSI {e.Rssi}dBm = {e.Data.Length} byte message {messageText}");
          }
          catch (Exception ex)
          {
