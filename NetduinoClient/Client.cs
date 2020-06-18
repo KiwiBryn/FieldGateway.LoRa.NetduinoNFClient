@@ -12,6 +12,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+// Use this to flash your device
+//    nanoff --target NETDUINO3_WIFI --update
 //---------------------------------------------------------------------------------
 namespace devMobile.IoT.Netduino.FieldGateway
 {
@@ -37,12 +39,12 @@ namespace devMobile.IoT.Netduino.FieldGateway
       private readonly GpioPin led;
       private readonly Rfm9XDevice rfm9XDevice;
       private readonly TimeSpan dueTime = new TimeSpan(0, 0, 15);
-      private readonly TimeSpan periodTime = new TimeSpan(0, 0, 300);
+      private readonly TimeSpan periodTime = new TimeSpan(0, 0, 60);
       private readonly SiliconLabsSI7005 sensor;
 
       public NetduinoClient()
       {
-         Debug.WriteLine("devMobile.IoT.Rfm9x.ShieldSerial starting");
+         Debug.WriteLine("devMobile.IoT.Netduino.FieldGateway");
 
          led = GpioController.GetDefault().OpenPin(PinNumber('A', 10));
          led.SetDriveMode(GpioPinDriveMode.Output);
@@ -76,16 +78,16 @@ namespace devMobile.IoT.Netduino.FieldGateway
          double humidity = sensor.Humidity();
          double temperature = sensor.Temperature();
 
-         Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss} H:{humidity} T:{temperature}");
+         Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss} TX-H:{humidity:F0}% T:{temperature:F1}°");
 
-         rfm9XDevice.Send(fieldGatewayAddress, Encoding.UTF8.GetBytes("t " + temperature.ToString("F1") + ",H " + humidity.ToString("F0")));
+         rfm9XDevice.Send(fieldGatewayAddress, Encoding.UTF8.GetBytes($"T {temperature:F1},H {humidity:F0}"));
 
          led.Write( GpioPinValue.High);
       }
 
       private void Rfm9XDevice_OnTransmit(object sender, Rfm9XDevice.OnDataTransmitedEventArgs e)
       {
-         Debug.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX Done");
+         Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss} TX-Done");
          led.Write( GpioPinValue.Low);
       }
 
@@ -96,7 +98,7 @@ namespace devMobile.IoT.Netduino.FieldGateway
             string messageText = new string(UTF8Encoding.UTF8.GetChars(e.Data));
             string addressText = new string(UTF8Encoding.UTF8.GetChars(e.Address));
 
-            Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss}-Rfm9X PacketSnr {e.PacketSnr} Packet RSSI {e.PacketRssi} dBm RSSI {e.Rssi}dBm = {e.Data.Length} byte message {messageText}");
+            Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss}-RX PacketSnr {e.PacketSnr:F2} Packet RSSI {e.PacketRssi} dBm RSSI {e.Rssi} dBm = {e.Data.Length} byte message {messageText}");
          }
          catch (Exception ex)
          {
