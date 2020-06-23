@@ -30,9 +30,18 @@ namespace devMobile.SiliconLabsSI7005TestHarness
       {
          try
          {
-            Debug.WriteLine("devMobile.IoT.Rfm9x.ShieldSerial starting");
+            Debug.WriteLine("devMobile.SiliconLabsSI7005TestHarness starting");
 
+            // STM32F091RC: PA5 is LED_GREEN
+            // nanoff --target ST_NUCLEO64_F091RC --update
+            //GpioPin led = GpioController.GetDefault().OpenPin(PinNumber('A', 5));
+
+            // nanoff --target NETDUINO3_WIFI --update
             GpioPin led = GpioController.GetDefault().OpenPin(PinNumber('A', 10));
+
+            // nanoff --target ST_STM32F769I_DISCOVERY --update
+            //GpioPin led = GpioController.GetDefault().OpenPin(PinNumber('J', 5));
+
             led.SetDriveMode(GpioPinDriveMode.Output);
 
             Debug.WriteLine(I2cDevice.GetDeviceSelector());
@@ -45,7 +54,7 @@ namespace devMobile.SiliconLabsSI7005TestHarness
                double humidity = sensor.Humidity();
                double temperature = sensor.Temperature();
 
-               Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss} H:{humidity:0} % T:{temperature:0.0}°");
+               Debug.WriteLine($"{DateTime.UtcNow:hh:mm:ss} H:{humidity:f0} % T:{temperature:f1}°");
 
                led.Toggle();
 
